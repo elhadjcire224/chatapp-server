@@ -1,14 +1,10 @@
 import vine from '@vinejs/vine'
 import { Infer } from '@vinejs/vine/types'
+import { unique } from './utils.js'
 
 export const registrationValidator = vine.compile(vine.object({
-    username: vine.string().trim().escape().minLength(5).maxLength(20).unique(async (db,value)=> {
-        const result = await db.from('users').select('id').where('username',value)
-        return !!!result.length
-    }),
-    email: vine.string().email().unique(async (db,value) => {
-        return !!!(await db.from('users').select('email').where('email',value)).length
-    }),
+    username: vine.string().trim().escape().minLength(5).maxLength(20).unique(unique('users','username')),
+     email: vine.string().email().unique(unique('users','email')),
     password: vine.string().minLength(8).maxLength(100)
 }))
 
